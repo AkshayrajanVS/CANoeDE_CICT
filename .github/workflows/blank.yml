@@ -59,21 +59,32 @@ jobs:
 
         run: python C:/PND/POC/Benz/Python/RunAllTests.py
 
-      - name: Move Report to Repo Directory
-        shell: powershell
+      - name: Remove Old Report from Repo  
+        shell: powershell  
         run: |
-          Move-Item -Path "C:\PND\POC\Benz\Python\Default\Report_TestConfiguration12.vtestreport" -Destination "${{ github.workspace }}\Report_TestConfiguration12.vtestreport" -Force
+          $reportPath = "${{ github.workspace }}\Report_TestConfiguration12.vtestreport"
+          if (Test-Path $reportPath) {
+            Remove-Item -Path $reportPath -Force
+          }
 
-      - name: Commit and Push Report
-        shell: powershell
+      - name: Move New Report to Repo Directory  
+        shell: powershell  
+        run: |
+          Move-Item -Path "C:\PND\POC\Benz\Python\Default\Report_TestConfiguration12.vtestreport" `
+                    -Destination "${{ github.workspace }}\Report_TestConfiguration12.vtestreport" -Force  
+
+      - name: Commit and Push Report  
+        shell: powershell  
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add Report_TestConfiguration12.vtestreport
-          git commit -m "Automated report upload"
-          git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          git rm --ignore-unmatch Report_TestConfiguration12.vtestreport # Ensure old file is deleted
+          git add -A
+          git commit -m "Automated report upload" --allow-empty
+          git push origin main --force
+        env:  
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
         
          
 
