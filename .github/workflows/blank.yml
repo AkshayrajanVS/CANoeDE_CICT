@@ -79,8 +79,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          git rm --ignore-unmatch Report_TestConfiguration12.vtestreport # Ensure old file is deleted
-          git add -A
+          git rm -f --ignore-unmatch Report_TestConfiguration12.vtestreport # Ensure old file is deleted
+          # Add the new report
+          git add Report_TestConfiguration12.vtestreport
           git commit -m "Automated report upload" --allow-empty
           git push origin main --force
         env:  
