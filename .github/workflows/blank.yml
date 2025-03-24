@@ -53,11 +53,28 @@ jobs:
 
       # Runs a single command using the runners shell 
 
-      - name: Run a one-line script 
+      - name: Start CANoeDE and run tests 
 
         shell: powershell 
 
         run: python C:/PND/POC/Benz/Python/RunAllTests.py
+
+      - name: Move Report to Repo Directory
+        shell: powershell
+        run: |
+          Move-Item -Path "C:\PND\POC\Benz\Python\Default\Report_TestConfiguration12.vtestreport" -Destination "${{ github.workspace }}\Report_TestConfiguration12.vtestreport" -Force
+
+      - name: Commit and Push Report
+        shell: powershell
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add Report_TestConfiguration12.vtestreport
+          git commit -m "Automated report upload"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
          
 
                      
