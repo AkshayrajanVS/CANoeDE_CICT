@@ -1,94 +1,19 @@
+name: CANoeDE_CICT
 
-# This is a basic workflow to help you get started with Actions 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
 
- 
-
-name: CANoeDE_CICT 
-
- 
-
-# Controls when the workflow will run 
-
-on: 
-
-  # Triggers the workflow on push or pull request events but only for the "main" branch 
-
-  push: 
-
-    branches: [ "main" ] 
-
-  pull_request: 
-
-    branches: [ "main" ] 
-
- 
-
-  # Allows you to run this workflow manually from the Actions tab 
-
-  workflow_dispatch: 
-
- 
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel 
-
-jobs: 
-
-  # This workflow contains a single job called "build" 
-
-  build: 
-
-    # The type of runner that the job will run on 
-
+jobs:
+  build:
     runs-on: self-hosted
 
- 
+    steps:
+      - uses: actions/checkout@v4
 
-    # Steps represent a sequence of tasks that will be executed as part of the job 
-
-    steps: 
-
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it 
-
-      - uses: actions/checkout@v4 
-
-      # Runs a single command using the runners shell 
-
-      - name: Start CANoeDE and run tests 
-
-        shell: powershell 
-
+      - name: Start CANoeDE and run tests
+        shell: powershell
         run: python C:/PND/POC/Benz/Python/RunAllTests.py
-
-      - name: Remove Old Report from Repo  
-        shell: powershell  
-        run: |
-          $reportPath = "${{ github.workspace }}\Report_TestConfiguration12.vtestreport"
-          if (Test-Path $reportPath) {
-            Remove-Item -Path $reportPath -Force
-          }
-
-      - name: Move New Report to Repo Directory  
-        shell: powershell  
-        run: |
-          Move-Item -Path "C:\PND\POC\Benz\Python\Default\Report_TestConfiguration12.vtestreport" `
-                    -Destination "${{ github.workspace }}\Report_TestConfiguration12.vtestreport" -Force  
-
-      - name: Commit and Push Report  
-        shell: powershell  
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          git rm -f --ignore-unmatch Report_TestConfiguration12.vtestreport # Ensure old file is deleted
-          # Add the new report
-          git add Report_TestConfiguration12.vtestreport
-          git commit -m "Automated report upload" --allow-empty
-          git push origin main --force
-        env:  
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-        
-         
-
-                     
-
-      
